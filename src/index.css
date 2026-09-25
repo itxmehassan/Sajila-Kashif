@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+}
+
+/* Custom Typography */
+.font-arabic {
+  font-family: 'Amiri', serif;
+  font-feature-settings: "cv01", "cv02";
+}
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-cormorant {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+.font-marcellus {
+  font-family: 'Marcellus', serif;
+}
+
+.font-script {
+  font-family: 'Pinyon Script', cursive;
+}
+
+/* Gold Gradient & Foil Styling */
+.gold-gradient-text {
+  background: linear-gradient(135deg, #E6C875 0%, #FFF3C4 28%, #D4AF37 55%, #AA8232 82%, #F3D993 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-gradient-subtle {
+  background: linear-gradient(135deg, #DFBE74 0%, #FAEBBA 40%, #B88E35 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gold-border-gradient {
+  border-image: linear-gradient(to bottom right, #D4AF37, #F5E5B8, #AA8232) 1;
+}
+
+.gold-foil-bg {
+  background: linear-gradient(135deg, #C59B27 0%, #EED994 40%, #B88E35 80%, #DFBE74 100%);
+}
+
+.burgundy-glass {
+  background: rgba(85, 12, 26, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.ivory-glass {
+  background: rgba(253, 251, 247, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Soft Animations */
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(1.07);
+  }
+  30% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1.04);
+  }
+  60% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 25px 2px rgba(186, 28, 64, 0.45), 0 0 50px 8px rgba(212, 175, 55, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 45px 8px rgba(186, 28, 64, 0.65), 0 0 80px 18px rgba(212, 175, 55, 0.45);
+  }
+}
+
+@keyframes floatDust {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-40px) rotate(360deg);
+    opacity: 0.1;
+  }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 2.6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* Custom Scrollbar for Luxury Aesthetics */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #190509;
+}
+::-webkit-scrollbar-thumb {
+  background: #7B1327;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A82038;
+}
