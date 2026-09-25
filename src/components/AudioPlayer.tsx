@@ -6,7 +6,11 @@ import { Volume2, VolumeX, Music } from 'lucide-react';
  * Provides an authentic, meditative Eastern wedding sitar & tanpura ambient drone.
  * Guaranteed 100% offline, zero external broken audio links, zero autoplay violations.
  */
-export const AudioPlayer: React.FC = () => {
+interface AudioPlayerProps {
+  className?: string;
+}
+
+export const AudioPlayer: React.FC<AudioPlayerProps> = ({ className = '' }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const gainNodeRef = useRef<GainNode | null>(null);
@@ -145,7 +149,7 @@ export const AudioPlayer: React.FC = () => {
       onClick={toggleAudio}
       aria-label={isPlaying ? "Mute celebratory ambient music" : "Play celebratory ambient music"}
       title={isPlaying ? "Mute Music" : "Play Festive Music"}
-      className="fixed top-4 right-4 z-40 flex items-center gap-2 px-3 py-2 rounded-full bg-[#2A060F]/80 hover:bg-[#3D0A17] border border-[#D4AF37]/50 text-[#E6C875] backdrop-blur-md shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]"
+      className={className || "fixed top-4 right-4 z-40 flex items-center gap-2 px-3 py-2 rounded-full bg-[#2A060F]/80 hover:bg-[#3D0A17] border border-[#D4AF37]/50 text-[#E6C875] backdrop-blur-md shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] cursor-pointer"}
     >
       {isPlaying ? (
         <>

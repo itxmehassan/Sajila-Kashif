@@ -8,7 +8,12 @@ import {
   ExternalLink,
   ChevronDown,
   Check,
-  RotateCcw
+  RotateCcw,
+  Camera,
+  Upload,
+  Link as LinkIcon,
+  Image as ImageIcon,
+  X
 } from 'lucide-react';
 import {
   GOOGLE_MAPS_URL,
@@ -46,6 +51,8 @@ export default function App() {
     }
   });
 
+  const [showImageModal, setShowImageModal] = useState(false);
+  const [imageUrlInput, setImageUrlInput] = useState('');
   const [imageToast, setImageToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -75,11 +82,41 @@ export default function App() {
         } catch {
           // localStorage quote limit reached, still works in memory
         }
+        setShowImageModal(false);
         setImageToast('Photo updated successfully! Synchronized across loading screen & card.');
         setTimeout(() => setImageToast(null), 4000);
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleUrlSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!imageUrlInput.trim()) return;
+
+    const trimmed = imageUrlInput.trim();
+    setCoupleImage(trimmed);
+    try {
+      localStorage.setItem(IMAGE_STORAGE_KEY, trimmed);
+    } catch {
+      // ignore
+    }
+    setImageUrlInput('');
+    setShowImageModal(false);
+    setImageToast('Photo updated successfully! Synchronized across loading screen & card.');
+    setTimeout(() => setImageToast(null), 4000);
+  };
+
+  const handleResetToDefaultImage = () => {
+    setCoupleImage(defaultWeddingCoupleImg);
+    try {
+      localStorage.removeItem(IMAGE_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+    setShowImageModal(false);
+    setImageToast('Reset to original wedding photograph.');
+    setTimeout(() => setImageToast(null), 3000);
   };
 
   const handleShare = async () => {
@@ -117,19 +154,26 @@ export default function App() {
       {/* 3. MAIN WEDDING INVITATION */}
       {appState === 'card' && (
         <main className="relative min-h-screen overflow-x-hidden pb-16">
-          <AudioPlayer />
-          
-          {/* Top Bar Actions: Share */}
-          <div className="fixed top-4 left-4 z-40 flex items-center gap-2">
+          {/* Share Button on Top Left */}
+          <button
+            onClick={handleShare}
+            aria-label="Share Wedding Invitation"
+            title="Share with Family & Friends"
+            className="fixed top-4 left-4 z-40 flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#2A060F]/80 hover:bg-[#3D0A17] border border-[#D4AF37]/50 text-[#E6C875] backdrop-blur-md shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] cursor-pointer"
+          >
+            <Share2 size={15} />
+            <span className="text-[11px] font-cinzel tracking-wider uppercase hidden sm:inline">Share</span>
+          </button>
+
+          {/* Top Right: Just a small gold dot button next to the music button with no text */}
+          <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
             <button
-              onClick={handleShare}
-              aria-label="Share Wedding Invitation"
-              title="Share with Family & Friends"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#2A060F]/80 hover:bg-[#3D0A17] border border-[#D4AF37]/50 text-[#E6C875] backdrop-blur-md shadow-lg transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37] cursor-pointer"
-            >
-              <Share2 size={15} />
-              <span className="text-[11px] font-cinzel tracking-wider uppercase hidden sm:inline">Share</span>
-            </button>
+              onClick={() => setShowImageModal(true)}
+              aria-label="Upload Photo"
+              title="Upload Photo"
+              className="w-2.5 h-2.5 rounded-full bg-[#D4AF37]/50 hover:bg-[#E6C875] hover:scale-150 border border-[#D4AF37] transition-all duration-300 cursor-pointer shadow-[0_0_8px_rgba(212,175,55,0.4)]"
+            />
+            <AudioPlayer />
           </div>
 
           {shareToast && (
@@ -139,20 +183,117 @@ export default function App() {
             </div>
           )}
 
-          {/* Hidden file input for programmatically or secretly updating photo if needed via console or custom trigger */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            accept="image/*"
-            className="hidden"
-            aria-hidden="true"
-          />
-
           {imageToast && (
             <div className="fixed top-16 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-[#1A0408] border border-[#D4AF37] text-[#FFFDF9] text-xs font-sans tracking-wide shadow-2xl flex items-center gap-2 max-w-sm text-center">
               <Check size={14} className="text-[#E6C875] shrink-0" />
               <span>{imageToast}</span>
+            </div>
+          )}
+
+          {/* IMAGE UPLOAD & SELECTION MODAL */}
+          {showImageModal && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm"
+              role="dialog"
+              aria-label="Upload Invitation Image"
+            >
+              <div className="relative w-full max-w-md rounded-2xl bg-[#1F050C] border border-[#D4AF37]/70 p-6 text-stone-100 shadow-2xl">
+                <button
+                  onClick={() => setShowImageModal(false)}
+                  className="absolute top-4 right-4 text-stone-400 hover:text-white p-1 rounded-full hover:bg-white/10"
+                  aria-label="Close dialog"
+                >
+                  <X size={18} />
+                </button>
+
+                <div className="text-center mb-5">
+                  <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[#3B0A17] border border-[#D4AF37]/50 flex items-center justify-center text-[#E6C875]">
+                    <ImageIcon size={20} />
+                  </div>
+                  <h3 className="font-cinzel text-lg font-bold text-[#F5E1A4] tracking-wider uppercase">
+                    Upload Photograph
+                  </h3>
+                  <p className="text-xs text-stone-300 font-sans mt-1">
+                    Choose a photo from your device or paste a URL. It will automatically update both the <strong>opening split loading screen</strong> and <strong>inside the card</strong>.
+                  </p>
+                </div>
+
+                {/* Current Image Preview */}
+                <div className="mb-4 flex items-center gap-3 p-2 rounded-xl bg-black/40 border border-[#D4AF37]/30">
+                  <div className="w-14 h-16 rounded-lg overflow-hidden shrink-0 bg-stone-900 border border-white/20">
+                    <img
+                      src={coupleImage}
+                      alt="Current couple preview"
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+                  <div className="text-left text-xs">
+                    <p className="font-cinzel text-[#E6C875] font-semibold">Active Photo</p>
+                    <p className="text-stone-400 text-[11px]">Applied to loading screen &amp; invitation card</p>
+                  </div>
+                </div>
+
+                {/* Option 1: File Upload */}
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full mb-3 py-3 px-4 rounded-xl bg-gradient-to-r from-[#8C142A] to-[#B01C38] hover:from-[#9D1730] hover:to-[#C01F3E] border border-[#E6C875]/60 text-white font-cinzel text-xs tracking-wider uppercase font-semibold flex items-center justify-center gap-2 shadow-md cursor-pointer transition-transform active:scale-95"
+                >
+                  <Upload size={16} className="text-[#F5E1A4]" />
+                  <span>Choose Photo From Device</span>
+                </button>
+
+                {/* Option 2: Image Web Link */}
+                <form onSubmit={handleUrlSubmit} className="mt-4 pt-4 border-t border-[#D4AF37]/25 space-y-2">
+                  <label className="block text-[11px] font-cinzel uppercase text-[#E6C875]/85 tracking-wider text-left">
+                    Or Enter Image URL:
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <LinkIcon size={14} className="absolute left-3 top-3 text-stone-400" />
+                      <input
+                        type="url"
+                        value={imageUrlInput}
+                        onChange={(e) => setImageUrlInput(e.target.value)}
+                        placeholder="https://example.com/photo.jpg"
+                        className="w-full pl-8 pr-3 py-2 text-xs rounded-lg bg-[#140206] border border-[#D4AF37]/40 text-stone-100 placeholder-stone-500 focus:outline-none focus:border-[#E6C875]"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="px-3 py-2 rounded-lg bg-[#3A0A17] hover:bg-[#520F22] border border-[#D4AF37]/50 text-[#F5E1A4] text-xs font-cinzel tracking-wider uppercase font-semibold cursor-pointer"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </form>
+
+                {/* Reset to Original Button */}
+                <div className="mt-5 pt-3 border-t border-[#D4AF37]/20 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={handleResetToDefaultImage}
+                    className="text-[11px] font-sans text-stone-400 hover:text-[#F5E1A4] transition-colors underline cursor-pointer"
+                  >
+                    Reset to original wedding photo
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowImageModal(false)}
+                    className="text-xs font-cinzel text-stone-300 hover:text-white px-3 py-1 rounded-md"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -232,9 +373,8 @@ export default function App() {
               {/* COUPLE PHOTOGRAPH FRAME */}
               <section className="my-8 px-2">
                 <div
-                  onDoubleClick={() => fileInputRef.current?.click()}
                   title="Kashif Raza Khan & Sajila Batool"
-                  className="relative mx-auto max-w-xs sm:max-w-sm rounded-2xl overflow-hidden p-1.5 bg-gradient-to-tr from-[#D4AF37] via-[#F8E7BE] to-[#AA8232] shadow-xl group select-none cursor-default"
+                  className="relative mx-auto max-w-xs sm:max-w-sm rounded-2xl overflow-hidden p-1.5 bg-gradient-to-tr from-[#D4AF37] via-[#F8E7BE] to-[#AA8232] shadow-xl group select-none"
                 >
                   <div className="relative rounded-[14px] overflow-hidden aspect-[3/4] bg-[#2A060E]">
                     <img
