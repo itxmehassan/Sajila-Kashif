@@ -57,7 +57,10 @@ export const OpeningSplitScreen: React.FC<OpeningSplitScreenProps> = ({ onComple
         }}
       >
         <img
-          src={imageSrc}
+          src={imageSrc || weddingCoupleImg}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = weddingCoupleImg;
+          }}
           alt="Kashif Raza Khan & Sajila Batool"
           referrerPolicy="no-referrer"
           className="absolute top-0 left-0 w-[100vw] h-full object-cover object-center max-w-none"
@@ -75,7 +78,10 @@ export const OpeningSplitScreen: React.FC<OpeningSplitScreenProps> = ({ onComple
         }}
       >
         <img
-          src={imageSrc}
+          src={imageSrc || weddingCoupleImg}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = weddingCoupleImg;
+          }}
           alt="Kashif Raza Khan & Sajila Batool"
           referrerPolicy="no-referrer"
           className="absolute top-0 right-0 w-[100vw] h-full object-cover object-center max-w-none"

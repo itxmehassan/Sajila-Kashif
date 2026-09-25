@@ -19,6 +19,7 @@ import {
   GOOGLE_MAPS_URL,
   WEDDING_DETAILS
 } from './weddingConfig';
+// Default embedded couple portrait bundled with the applet
 import defaultWeddingCoupleImg from './assets/images/wedding_couple.jpg';
 import { OpeningSplitScreen } from './components/OpeningSplitScreen';
 import { TapToRevealScreen } from './components/TapToRevealScreen';
@@ -41,7 +42,7 @@ export default function App() {
   const [shareToast, setShareToast] = useState(false);
   const [showCalendarMenu, setShowCalendarMenu] = useState(false);
   
-  // Custom image state (defaults to original couple image, with localStorage persistence)
+  // Custom image state: defaults to bundled weddingCoupleImg so EVERY guest on ANY phone/laptop sees it
   const [coupleImage, setCoupleImage] = useState<string>(() => {
     try {
       const saved = localStorage.getItem(IMAGE_STORAGE_KEY);
@@ -378,7 +379,10 @@ export default function App() {
                 >
                   <div className="relative rounded-[14px] overflow-hidden aspect-[3/4] bg-[#2A060E]">
                     <img
-                      src={coupleImage}
+                      src={coupleImage || defaultWeddingCoupleImg}
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = defaultWeddingCoupleImg;
+                      }}
                       alt="Kashif Raza Khan & Sajila Batool"
                       referrerPolicy="no-referrer"
                       className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
